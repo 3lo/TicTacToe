@@ -9,4 +9,4 @@ Requirements:
  - Pygame
  
 ![Game](https://prnt.sc/olaokk "Game")
-![End](http://prntscr.com/olaoq6 "End")
+![End](https://prnt.sc/olaoq6.png "End")
