@@ -8,5 +8,5 @@ To-Do List:
 Requirements:
  - Pygame
  
-![Game](https://imgur.com/UxPCVD9 "Game")
-![End](https://imgur.com/mhcVpfE "End")
+![Game](https://imgur.com/UxPCVD9.png "Game")
+![End](https://i.imgur.com/mhcVpfE.png "End")
