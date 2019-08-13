@@ -40,11 +40,15 @@ class Winner:
 
 def scoreboard():
     score1 = 0
-    # score2 = 0
+    score2 = 0
     smallText = pygame.font.Font("freesansbold.ttf", 20)
     textSurf, textRect = text_objects("Player 1: " + str(score1), smallText)
-    # textSurf, textRect = text_objects("Player 2: " + str(score2), smallText)
-    textRect.center = (55, 15)
+    textRect.center = (53, 12)
+    screen.blit(textSurf, textRect)
+
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
+    textSurf, textRect = text_objects("Player 2: " + str(score2), smallText)
+    textRect.center = (53, 35)
     screen.blit(textSurf, textRect)
 
 
