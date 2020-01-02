@@ -1,6 +1,5 @@
 import sys
 import pygame
-
 pygame.init()  # initiates pygame function
 
 print("Tic Tac Toe")
@@ -14,7 +13,6 @@ screen = pygame.display.set_mode(size)  # resolution of the game
 pygame.display.set_caption("Tic Tac Toe")  # title of window
 clock = pygame.time.Clock()  # frames per second (game clock)
 turn = True
-# block = pygame.image.load('block.png')  # load images in
 
 
 def text_objects(text, font):
@@ -38,12 +36,19 @@ class Winner:
         self.data = border, player
 
 
-def scoreboard():
-    score1 = 0
-    score2 = 0
+class Tiles:
+    def __init__(self, area, color, player, state):
+        self.area = area  # area of rectange position [x, y, width, height]
+        self.color = color  # color of the tile (black = inactive) (white = active)
+        self.player = player  # which player is there? X or O
+        self.state = state  # true or false is there a player there?
+
+
+def scoreboard(score1, score2):
     smallText = pygame.font.Font("freesansbold.ttf", 20)
     textSurf, textRect = text_objects("Player 1: " + str(score1), smallText)
     textRect.center = (53, 12)
+    pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 50))
     screen.blit(textSurf, textRect)
 
     smallText = pygame.font.Font("freesansbold.ttf", 20)
@@ -53,17 +58,18 @@ def scoreboard():
 
 
 def background():
-    pygame.draw.rect(screen, black, pygame.Rect(0, 50, 106, 63))  # upper left square
-    pygame.draw.rect(screen, black, pygame.Rect(0, 114, 106, 63))  # middle left square
-    pygame.draw.rect(screen, black, pygame.Rect(0, 178, 106, 63))  # lower left square
+    # pygame.draw.rect(screen, black, pygame.Rect(0, 50, 106, 63))  # upper left square
+    pygame.draw.rect(screen, topRowLeftTile.color, topRowLeftTile.area)  # upper left square
+    pygame.draw.rect(screen, midRowLeftTile.color, midRowLeftTile.area)  # middle left square
+    pygame.draw.rect(screen, botRowLeftTile.color, botRowLeftTile.area)  # lower left square
 
-    pygame.draw.rect(screen, black, pygame.Rect(107, 50, 106, 63))  # upper center square
-    pygame.draw.rect(screen, black, pygame.Rect(107, 114, 106, 63))  # middle center square
-    pygame.draw.rect(screen, black, pygame.Rect(107, 178, 106, 63))  # lower center square
+    pygame.draw.rect(screen, topRowMidTile.color, topRowMidTile.area)  # upper center square
+    pygame.draw.rect(screen, midRowMidTile.color, midRowMidTile.area)  # middle center square
+    pygame.draw.rect(screen, botRowMidTile.color, botRowMidTile.area)  # lower center square
 
-    pygame.draw.rect(screen, black, pygame.Rect(214, 50, 106, 63))  # upper right square
-    pygame.draw.rect(screen, black, pygame.Rect(214, 114, 106, 63))  # middle right square
-    pygame.draw.rect(screen, black, pygame.Rect(214, 178, 106, 63))  # lower right square
+    pygame.draw.rect(screen, topRowRightTile.color, topRowRightTile.area)  # upper right square
+    pygame.draw.rect(screen, midRowRightTile.color, midRowRightTile.area)  # middle right square
+    pygame.draw.rect(screen, botRowRightTile.color, botRowRightTile.area)  # lower right square
 
 
 border_list = []
@@ -82,6 +88,7 @@ def set_player(border):
         check_winner(winner.data)
 
 
+# data storage for winner checking
 # horizontal rows
 top_row = []
 square_top_row = []
@@ -106,12 +113,19 @@ square_back_slash = []  # \
 def winner(pos, area):
     if "O" not in pos:
         print("WINNER: PLAYER 1!")
+        scoreboard(1, 0)
         game_finished(area)
     elif "X" not in pos:
         print("WINNER: PLAYER 2!")
         game_finished(area)
-    if len(border_list) == 9 and "X" in pos and "O" in pos:
+    elif len(border_list) == 9 and "X" in pos and "O" in pos:
         print("The game is a tie!")
+
+
+def game_finished(area):
+    print("The game is over!")
+    for i in range(len(area)):
+        pygame.draw.rect(screen, cyan, area[i], 3)
 
 
 def check_winner(data):
@@ -163,46 +177,44 @@ def check_winner(data):
             winner(back_slash, square_back_slash)
 
 
-def game_finished(area):
-    print("The game is over!")
-    for i in range(0, 3):
-        pygame.draw.rect(screen, cyan, area[i], 3)
+topRowLeftTile = Tiles((0, 50, 106, 63), black, "?", False)
+topRowMidTile = Tiles((107, 50, 106, 63), black, "?", False)
+topRowRightTile = Tiles((214, 50, 106, 63), black, "?", False)
+
+midRowLeftTile = Tiles((0, 114, 106, 63), black, "?", False)
+midRowMidTile = Tiles((107, 114, 106, 63), black, "?", False)
+midRowRightTile = Tiles((214, 114, 106, 63), black, "?", False)
+
+botRowLeftTile = Tiles((0, 178, 106, 63), black, "?", False)
+botRowMidTile = Tiles((107, 178, 106, 63), black, "?", False)
+botRowRightTile = Tiles((214, 178, 106, 63), black, "?", False)
 
 
 def clicked():
-    if 0 + 106 > mouse[0] > 0 and 50 + 63 > mouse[1] > 50:
-        square1 = pygame.Rect(0, 50, 106, 63)
-        set_player(square1)
+    if 0 + 106 > mouse[0] > 0 and 50 + 63 > mouse[1] > 50:  # inside the area of square1 - mouse = (x, y)
+        set_player(topRowLeftTile.area)
     elif 0 + 106 > mouse[0] > 0 and 114 + 63 > mouse[1] > 114:
-        square2 = pygame.Rect(0, 114, 106, 63)
-        set_player(square2)
+        set_player(midRowLeftTile.area)
     elif 0 + 106 > mouse[0] > 0 and 178 + 63 > mouse[1] > 178:
-        square3 = pygame.Rect(0, 178, 106, 63)
-        set_player(square3)
+        set_player(botRowLeftTile.area)
     elif 107 + 106 > mouse[0] > 107 and 50 + 63 > mouse[1] > 50:
-        square4 = pygame.Rect(107, 50, 106, 63)
-        set_player(square4)
+        set_player(topRowMidTile.area)
     elif 107 + 106 > mouse[0] > 107 and 114 + 63 > mouse[1] > 114:
-        square5 = pygame.Rect(107, 114, 106, 63)
-        set_player(square5)
+        set_player(midRowMidTile.area)
     elif 107 + 106 > mouse[0] > 107 and 178 + 63 > mouse[1] > 178:
-        square6 = pygame.Rect(107, 178, 106, 63)
-        set_player(square6)
+        set_player(botRowMidTile.area)
     elif 214 + 106 > mouse[0] > 214 and 50 + 63 > mouse[1] > 50:
-        square7 = pygame.Rect(214, 50, 106, 63)
-        set_player(square7)
+        set_player(topRowRightTile.area)
     elif 214 + 106 > mouse[0] > 214 and 114 + 63 > mouse[1] > 114:
-        square8 = pygame.Rect(214, 114, 106, 63)
-        set_player(square8)
+        set_player(midRowRightTile.area)
     elif 214 + 106 > mouse[0] > 214 and 178 + 63 > mouse[1] > 178:
-        square9 = pygame.Rect(214, 178, 106, 63)
-        set_player(square9)
+        set_player(botRowRightTile.area)
 
 
 screen.fill(white)
-pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 50))  # x, y, width, height
+pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 50))  # x, y, width, height - scoreboard
 background()
-scoreboard()
+scoreboard(0, 0)
 
 while 1:
     mouse = pygame.mouse.get_pos()  # gets mouse position
@@ -211,8 +223,8 @@ while 1:
     for event in pygame.event.get():  # gets any event that happens (mouse movement, clicks, key presses)
         if event.type == pygame.QUIT:  # exited the window quits program
             sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN and mouse[1] > 50:
-            clicked()
+        elif event.type == pygame.MOUSEBUTTONDOWN and mouse[1] > 50:  # add condition for areas that have been clicked
+            clicked()  # click the same area twice and the next area can be the same player
             if turn is True:
                 turn = False
             else:
