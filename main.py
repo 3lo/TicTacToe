@@ -40,12 +40,13 @@ def scoreboard(score1, score2):
     smallText = pygame.font.Font("freesansbold.ttf", 20)
     textSurf, textRect = text_objects("Player 1: " + str(score1), smallText)
     textRect.center = (53, 12)
-    pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 50))
+    pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 20))
     screen.blit(textSurf, textRect)
 
     smallText = pygame.font.Font("freesansbold.ttf", 20)
     textSurf, textRect = text_objects("Player 2: " + str(score2), smallText)
     textRect.center = (53, 35)
+    pygame.draw.rect(screen, red, pygame.Rect(0, 20, 320, 25))
     screen.blit(textSurf, textRect)
 
 
@@ -98,15 +99,16 @@ back_slash = []  # \
 
 def winner(pos):
     area = pos[0][0], pos[1][0], pos[2][0]
-    print(area)
-    if "O" not in pos:
+    win = pos[0][1], pos[1][1], pos[2][1]
+    if "O" not in win:
         print("WINNER: PLAYER 1!")
         scoreboard(1, 0)
         game_finished(area)
-    elif "X" not in pos:
+    elif "X" not in win:
         print("WINNER: PLAYER 2!")
+        scoreboard(0, 1)
         game_finished(area)
-    elif len(border_list) == 9 and "X" in pos and "O" in pos:
+    elif len(border_list) == 9 and "X" in win and "O" in win:
         print("The game is a tie!")
 
 
