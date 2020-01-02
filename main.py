@@ -29,19 +29,11 @@ def players():
         return player2
 
 
-class Winner:
-    def __init__(self, border, player):
-        self.border = border
-        self.player = player
-        self.data = border, player
-
-
 class Tiles:
-    def __init__(self, area, color, player, state):
+    def __init__(self, area, color, player):
         self.area = area  # area of rectange position [x, y, width, height]
         self.color = color  # color of the tile (black = inactive) (white = active)
         self.player = player  # which player is there? X or O
-        self.state = state  # true or false is there a player there?
 
 
 def scoreboard(score1, score2):
@@ -58,7 +50,6 @@ def scoreboard(score1, score2):
 
 
 def background():
-    # pygame.draw.rect(screen, black, pygame.Rect(0, 50, 106, 63))  # upper left square
     pygame.draw.rect(screen, topRowLeftTile.color, topRowLeftTile.area)  # upper left square
     pygame.draw.rect(screen, midRowLeftTile.color, midRowLeftTile.area)  # middle left square
     pygame.draw.rect(screen, botRowLeftTile.color, botRowLeftTile.area)  # lower left square
@@ -76,41 +67,38 @@ border_list = []
 
 
 def set_player(border):
-    if border not in border_list:
-        border_list.append(border)
+    if border.area not in border_list:
+        border_list.append(border.area)
 
-        pygame.draw.rect(screen, white, border)
+        pygame.draw.rect(screen, white, border.area)
         smallText = pygame.font.Font("freesansbold.ttf", 50)
         textSurf, textRect = text_objects(players(), smallText)
-        textRect.center = ((border[0] + (106 / 2)), (border[1] + (63 / 2)))
+        textRect.center = ((border.area[0] + (106 / 2)), (border.area[1] + (63 / 2)))
         screen.blit(textSurf, textRect)
-        winner = Winner(border, players())
-        check_winner(winner.data)
+
+        border.player = players()
+
+        wins = border.area, border.player
+        check_winner(wins)
 
 
 # data storage for winner checking
 # horizontal rows
 top_row = []
-square_top_row = []
 middle_row = []
-square_middle_row = []
 bottom_row = []
-square_bottom_row = []
 # veritcal rows
 first_column = []
-square_first_column = []
 sec_column = []
-square_sec_column = []
 third_column = []
-square_third_column = []
 # diagonals
 forward_slash = []  # /
-square_forward_slash = []  # /
 back_slash = []  # \
-square_back_slash = []  # \
 
 
-def winner(pos, area):
+def winner(pos):
+    area = pos[0][0], pos[1][0], pos[2][0]
+    print(area)
     if "O" not in pos:
         print("WINNER: PLAYER 1!")
         scoreboard(1, 0)
@@ -131,84 +119,76 @@ def game_finished(area):
 def check_winner(data):
     # horizontal rows
     if data[0][1] == 50:
-        top_row.append(data[1])
-        square_top_row.append(data[0])
+        top_row.append(data)
         if len(top_row) == 3:
-            winner(top_row, square_top_row)
+            winner(top_row)
     elif data[0][1] == 114:
-        middle_row.append(data[1])
-        square_middle_row.append(data[0])
+        middle_row.append(data)
         if len(middle_row) == 3:
-            winner(middle_row, square_middle_row)
+            winner(middle_row)
     elif data[0][1] == 178:
-        bottom_row.append(data[1])
-        square_bottom_row.append(data[0])
+        bottom_row.append(data)
         if len(bottom_row) == 3:
-            winner(bottom_row, square_bottom_row)
+            winner(bottom_row)
     # vertical rows
     if data[0][0] == 0:
-        first_column.append(data[1])
-        square_first_column.append(data[0])
+        first_column.append(data)
         if len(first_column) == 3:
-            winner(first_column, square_first_column)
+            winner(first_column)
     elif data[0][0] == 107:
-        sec_column.append(data[1])
-        square_sec_column.append(data[0])
+        sec_column.append(data)
         if len(sec_column) == 3:
-            winner(sec_column, square_sec_column)
+            winner(sec_column)
     elif data[0][0] == 214:
-        third_column.append(data[1])
-        square_third_column.append(data[0])
+        third_column.append(data)
         if len(third_column) == 3:
-            winner(third_column, square_third_column)
+            winner(third_column)
     # forward slash diagonal
     if data[0][0] == 0 and data[0][1] == 178 or data[0][0] == 107 and data[0][1] == 114 or data[0][0] == 214 \
             and data[0][1] == 50:
-        forward_slash.append(data[1])
-        square_forward_slash.append(data[0])
+        forward_slash.append(data)
         if len(forward_slash) == 3:
-            winner(forward_slash, square_forward_slash)
+            winner(forward_slash)
     # back slash diagonal
     if data[0][0] == 0 and data[0][1] == 50 or data[0][0] == 107 and data[0][1] == 114 or data[0][0] == 214 \
             and data[0][1] == 178:
-        back_slash.append(data[1])
-        square_back_slash.append(data[0])
+        back_slash.append(data)
         if len(back_slash) == 3:
-            winner(back_slash, square_back_slash)
+            winner(back_slash)
 
 
-topRowLeftTile = Tiles((0, 50, 106, 63), black, "?", False)
-topRowMidTile = Tiles((107, 50, 106, 63), black, "?", False)
-topRowRightTile = Tiles((214, 50, 106, 63), black, "?", False)
+topRowLeftTile = Tiles((0, 50, 106, 63), black, None)
+topRowMidTile = Tiles((107, 50, 106, 63), black, None)
+topRowRightTile = Tiles((214, 50, 106, 63), black, None)
 
-midRowLeftTile = Tiles((0, 114, 106, 63), black, "?", False)
-midRowMidTile = Tiles((107, 114, 106, 63), black, "?", False)
-midRowRightTile = Tiles((214, 114, 106, 63), black, "?", False)
+midRowLeftTile = Tiles((0, 114, 106, 63), black, None)
+midRowMidTile = Tiles((107, 114, 106, 63), black, None)
+midRowRightTile = Tiles((214, 114, 106, 63), black, None)
 
-botRowLeftTile = Tiles((0, 178, 106, 63), black, "?", False)
-botRowMidTile = Tiles((107, 178, 106, 63), black, "?", False)
-botRowRightTile = Tiles((214, 178, 106, 63), black, "?", False)
+botRowLeftTile = Tiles((0, 178, 106, 63), black, None)
+botRowMidTile = Tiles((107, 178, 106, 63), black, None)
+botRowRightTile = Tiles((214, 178, 106, 63), black, None)
 
 
 def clicked():
     if 0 + 106 > mouse[0] > 0 and 50 + 63 > mouse[1] > 50:  # inside the area of square1 - mouse = (x, y)
-        set_player(topRowLeftTile.area)
+        set_player(topRowLeftTile)
     elif 0 + 106 > mouse[0] > 0 and 114 + 63 > mouse[1] > 114:
-        set_player(midRowLeftTile.area)
+        set_player(midRowLeftTile)
     elif 0 + 106 > mouse[0] > 0 and 178 + 63 > mouse[1] > 178:
-        set_player(botRowLeftTile.area)
+        set_player(botRowLeftTile)
     elif 107 + 106 > mouse[0] > 107 and 50 + 63 > mouse[1] > 50:
-        set_player(topRowMidTile.area)
+        set_player(topRowMidTile)
     elif 107 + 106 > mouse[0] > 107 and 114 + 63 > mouse[1] > 114:
-        set_player(midRowMidTile.area)
+        set_player(midRowMidTile)
     elif 107 + 106 > mouse[0] > 107 and 178 + 63 > mouse[1] > 178:
-        set_player(botRowMidTile.area)
+        set_player(botRowMidTile)
     elif 214 + 106 > mouse[0] > 214 and 50 + 63 > mouse[1] > 50:
-        set_player(topRowRightTile.area)
+        set_player(topRowRightTile)
     elif 214 + 106 > mouse[0] > 214 and 114 + 63 > mouse[1] > 114:
-        set_player(midRowRightTile.area)
+        set_player(midRowRightTile)
     elif 214 + 106 > mouse[0] > 214 and 178 + 63 > mouse[1] > 178:
-        set_player(botRowRightTile.area)
+        set_player(botRowRightTile)
 
 
 screen.fill(white)
