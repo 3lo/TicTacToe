@@ -36,15 +36,22 @@ class Tiles:
         self.player = player  # which player is there? X or O
 
 
+player1_score = 0
+player2_score = 0
+
+
 def scoreboard(score1, score2):
+    global player1_score, player2_score
+    player1_score = player1_score + score1
     smallText = pygame.font.Font("freesansbold.ttf", 20)
-    textSurf, textRect = text_objects("Player 1: " + str(score1), smallText)
+    textSurf, textRect = text_objects("Player 1: " + str(player1_score), smallText)
     textRect.center = (53, 12)
     pygame.draw.rect(screen, red, pygame.Rect(0, 0, 320, 20))
     screen.blit(textSurf, textRect)
 
+    player2_score = player2_score + score2
     smallText = pygame.font.Font("freesansbold.ttf", 20)
-    textSurf, textRect = text_objects("Player 2: " + str(score2), smallText)
+    textSurf, textRect = text_objects("Player 2: " + str(player2_score), smallText)
     textRect.center = (53, 35)
     pygame.draw.rect(screen, red, pygame.Rect(0, 20, 320, 25))
     screen.blit(textSurf, textRect)
@@ -206,7 +213,7 @@ while 1:
         if event.type == pygame.QUIT:  # exited the window quits program
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN and mouse[1] > 50:  # add condition for areas that have been clicked
-            clicked()  # click the same area twice and the next area can be the same player
+            clicked()
             if turn is True:
                 turn = False
             else:
